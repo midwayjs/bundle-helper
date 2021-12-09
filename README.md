@@ -10,4 +10,4 @@ Base usage:
 $ bundle
 ```
 
-it will be generate 'src/index.ts'
+it will be generate `src/index.ts`
