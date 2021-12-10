@@ -19,7 +19,7 @@ export class EntryGenerator {
   run(options: EntryGeneratorOptions = {}) {
     const baseDir = resolve(options.baseDir ?? process.cwd()) ;
 
-    if (!existsSync(join(baseDir, 'tsconfig'))) {
+    if (!existsSync(join(baseDir, 'tsconfig.json'))) {
       console.warn('not found tsconfig in project and ignore generate');
       return;
     }
