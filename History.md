@@ -1,4 +1,14 @@
 
+1.0.1 / 2022-01-27
+==================
+
+  * chore: update
+  * chore: remove bootstrap
+  * chore: update
+  * chore: update
+  * chore: update readme
+  * Release 1.0.0
+
 1.0.0 / 2021-12-09
 ==================
 
