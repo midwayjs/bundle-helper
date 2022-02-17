@@ -1,4 +1,4 @@
-import { join, resolve, relative } from 'path';
+import { join, resolve, posix } from 'path';
 import { safeRequire, safelyGet } from '@midwayjs/core';
 import { run } from '@midwayjs/glob';
 import { writeFileSync, readFileSync, existsSync } from 'fs';
@@ -62,7 +62,7 @@ export class EntryGenerator {
     });
 
     const exportFiles = fileResults.map(file => {
-      return `export * from './${relative(
+      return `export * from './${posix.relative(
         sourceDir,
         removeExtension(file)
       )}';\n`;
@@ -73,7 +73,7 @@ export class EntryGenerator {
     );
     if (configurationFile) {
       exportFiles.push(
-        `export { ${configurationClassName} as Configuration } from './${relative(
+        `export { ${configurationClassName} as Configuration } from './${posix.relative(
           sourceDir,
           removeExtension(configurationFile)
         )}';\n`
