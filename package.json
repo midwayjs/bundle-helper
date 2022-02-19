@@ -17,7 +17,6 @@
     "dist/**/*.d.ts"
   ],
   "dependencies": {
-    "yargs": "^15.3.1"
   },
   "devDependencies": {
     "@midwayjs/core": "beta",
