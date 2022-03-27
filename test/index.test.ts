@@ -1,19 +1,33 @@
-import { join } from 'path';
-import { EntryGenerator, getConfigurationClassName } from '../src/index';
 import { readFileSync } from 'fs';
+import { resolve, normalize } from 'path';
+import { EntryGenerator } from '../src/index';
 
 describe('/test/index.test.ts', () => {
   it('generate index', async () => {
-    const baseDir = join(__dirname, './fixtures/base-app');
-    const generator = new EntryGenerator();
-    await generator.run({
-      baseDir,
+    const baseUrl = resolve(__dirname, './fixtures/base-app');
+    const generator = new EntryGenerator({
+      baseUrl,
     });
-    expect(readFileSync(join(baseDir, 'src/index.ts')).toString()).toMatchSnapshot();
+    generator.run();
+    expect(
+      readFileSync(resolve(baseUrl, 'src/index.ts')).toString()
+    ).toMatchSnapshot();
   });
 
-  it('get configuration class name', () => {
-    expect(getConfigurationClassName(readFileSync(join(__dirname, './fixtures/case/file1.ts')).toString())).toEqual('ContainerLifeCycle');
-    expect(getConfigurationClassName(readFileSync(join(__dirname, './fixtures/case/file2.ts')).toString())).toEqual('ContainerLifeCycle');
+  it('get export info collection', () => {
+    new Array(3).fill('').forEach((_, i) => {
+      const baseUrl = resolve(__dirname, `./fixtures/case${i + 1}`);
+      const generator = new EntryGenerator({
+        baseUrl,
+        rootDir: '.',
+      });
+      const collection = generator.collect();
+
+      expect(collection.configurationClz).toEqual('ContainerLifeCycle');
+
+      expect(normalize(collection.configurationFilepath)).toEqual(
+        resolve(baseUrl, 'file.ts')
+      );
+    });
   });
 });
