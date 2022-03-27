@@ -1,4 +1,9 @@
 
+1.1.0 / 2022-03-27
+==================
+
+  * refactor(src): regepx is inaccuracy using typescript ast to refactor (#4)
+
 1.0.2 / 2022-02-20
 ==================
 
