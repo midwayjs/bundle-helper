@@ -98,7 +98,6 @@ export class EntryGenerator {
         }
       });
     } else if (ts.isModuleDeclaration(node)) {
-      console.log(node.getSourceFile().fileName);
       ts.forEachChild(node, n => this.visit(n, collection));
     }
   }
