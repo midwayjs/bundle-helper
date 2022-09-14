@@ -87,7 +87,8 @@ export class EntryGenerator {
 
   private visit(node: ts.Node, collection: ExportCollection) {
     if (ts.isClassDeclaration(node)) {
-      node.decorators?.forEach(decorator => {
+      const decorators = ts.canHaveDecorators(node) ? ts.getDecorators(node) : undefined;
+      decorators.forEach(decorator => {
         const symbol = this.typeChecker.getSymbolAtLocation(
           decorator.expression.getFirstToken()
         );
