@@ -1,4 +1,9 @@
 
+1.1.2 / 2022-09-15
+==================
+
+  * fix：Use ts.getDecorators() to get the decorators of a Node. (#7)
+
 1.1.1 / 2022-03-29
 ==================
 
