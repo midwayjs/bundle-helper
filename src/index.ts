@@ -87,16 +87,19 @@ export class EntryGenerator {
 
   private visit(node: ts.Node, collection: ExportCollection) {
     if (ts.isClassDeclaration(node)) {
-      node.decorators?.forEach(decorator => {
-        const symbol = this.typeChecker.getSymbolAtLocation(
-          decorator.expression.getFirstToken()
-        );
+      const decorators = ts.canHaveDecorators(node) ? ts.getDecorators(node) : undefined;
+      if(decorators) {
+        decorators.forEach(decorator => {
+          const symbol = this.typeChecker.getSymbolAtLocation(
+            decorator.expression.getFirstToken()
+          );
 
-        if (symbol.getName() === 'Configuration') {
-          collection.configurationClz = (<ts.ClassDeclaration>node).name.text;
-          collection.configurationFilepath = node.getSourceFile().fileName;
-        }
-      });
+          if (symbol.getName() === 'Configuration') {
+            collection.configurationClz = (<ts.ClassDeclaration>node).name.text;
+            collection.configurationFilepath = node.getSourceFile().fileName;
+          }
+        });
+      }
     } else if (ts.isModuleDeclaration(node)) {
       ts.forEachChild(node, n => this.visit(n, collection));
     }
