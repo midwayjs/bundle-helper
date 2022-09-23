@@ -19,8 +19,8 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "@midwayjs/core": "3.2.0",
-    "@midwayjs/decorator": "3.1.6",
+    "@midwayjs/core": "^3.2.0",
+    "@midwayjs/decorator": "^3.1.6",
     "@midwayjs/glob": "^1.0.6",
     "@types/jest": "^27.4.1",
     "@types/node": "17.0.23",
