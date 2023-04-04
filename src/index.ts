@@ -100,7 +100,7 @@ export class EntryGenerator {
           decorator.expression.getFirstToken()
         );
 
-        if (symbol.getName() === 'Configuration') {
+        if (symbol?.getName() === 'Configuration') {
           collection.configurationClz = (<ts.ClassDeclaration>node).name.text;
           collection.configurationFilepath = node.getSourceFile().fileName;
         }
