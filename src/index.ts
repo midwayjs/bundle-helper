@@ -135,7 +135,7 @@ export class EntryGenerator {
   public run() {
     const collection = this.collect();
     const exportCodes = collection.exportFiles
-      .filter(path => relative(collection.configurationFilepath, path) !== '')
+      .filter(path => posix.relative(collection.configurationFilepath, path) !== '')
       .map(path => {
         return `export * from './${posix.relative(this.sourceDir, path)
           .replace(extname(path), '')
