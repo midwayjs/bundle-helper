@@ -49,6 +49,7 @@ export class EntryGenerator {
   private program!: ts.Program;
   private sourceDir!: string;
   private programFiles!: string[];
+  private isESM = false;
 
   DEFAULT_PATTERN = ['**/**.ts', '**/**.tsx', '**/**.js'];
   DEFAULT_IGNORE_PATTERN = [
@@ -82,6 +83,11 @@ export class EntryGenerator {
       throw new Error(
         'Not found tsconfig.json bundle-helper only supports typescript'
       );
+    }
+
+    const pkg = safeRequire(resolve(baseUrl, 'package.json'));
+    if (pkg?.type === 'module') {
+      this.isESM = true;
     }
 
     this.sourceDir = resolve(baseUrl, srcDir);
@@ -156,7 +162,7 @@ export class EntryGenerator {
         return `export * from './${formatWindowsPath(
           relative(this.sourceDir, path)
         )
-          .replace(extname(path), '')
+          .replace(extname(path), this.isESM ? '.js' : '')
           .replace(/\\/g, '/')}';\n`;
       });
 
@@ -165,7 +171,10 @@ export class EntryGenerator {
         collection.configurationClz
       } as Configuration } from './${formatWindowsPath(
         relative(this.sourceDir, collection.configurationFilepath)
-      ).replace(extname(collection.configurationFilepath), '')}';\n`
+      ).replace(
+        extname(collection.configurationFilepath),
+        this.isESM ? '.js' : ''
+      )}';\n`
     );
 
     exportCodes.unshift(this.BANNER);

@@ -56,4 +56,15 @@ describe('/test/index.test.ts', () => {
       readFileSync(resolve(baseUrl, 'src/index.ts')).toString()
     ).toMatchSnapshot();
   });
+
+  it('support esm project', async () => {
+    const baseUrl = resolve(__dirname, './fixtures/base-app-esm');
+    const generator = new EntryGenerator({
+      baseUrl,
+    });
+    generator.run();
+    expect(
+      readFileSync(resolve(baseUrl, 'src/index.ts')).toString()
+    ).toMatchSnapshot();
+  });
 });
