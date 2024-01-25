@@ -1,4 +1,12 @@
-import { resolve, relative, extname, normalize, isAbsolute, posix, sep } from 'path';
+import {
+  resolve,
+  relative,
+  extname,
+  normalize,
+  isAbsolute,
+  posix,
+  sep,
+} from 'path';
 import { safeRequire, safelyGet } from '@midwayjs/core';
 import { run } from '@midwayjs/glob';
 import { writeFileSync, existsSync } from 'fs';
@@ -145,7 +153,9 @@ export class EntryGenerator {
     const exportCodes = collection.exportFiles
       .filter(path => relative(collection.configurationFilepath, path) !== '')
       .map(path => {
-        return `export * from './${formatWindowsPath(relative(this.sourceDir, path))
+        return `export * from './${formatWindowsPath(
+          relative(this.sourceDir, path)
+        )
           .replace(extname(path), '')
           .replace(/\\/g, '/')}';\n`;
       });
@@ -153,10 +163,9 @@ export class EntryGenerator {
     exportCodes.unshift(
       `export { ${
         collection.configurationClz
-      } as Configuration } from './${formatWindowsPath(relative(
-        this.sourceDir,
-        collection.configurationFilepath
-      )).replace(extname(collection.configurationFilepath), '')}';\n`
+      } as Configuration } from './${formatWindowsPath(
+        relative(this.sourceDir, collection.configurationFilepath)
+      ).replace(extname(collection.configurationFilepath), '')}';\n`
     );
 
     exportCodes.unshift(this.BANNER);
