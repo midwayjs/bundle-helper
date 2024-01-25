@@ -1,8 +1,24 @@
-import { resolve, relative, extname, normalize, isAbsolute } from 'path';
+import {
+  resolve,
+  relative,
+  extname,
+  normalize,
+  isAbsolute,
+  posix,
+  sep,
+} from 'path';
 import { safeRequire, safelyGet } from '@midwayjs/core';
 import { run } from '@midwayjs/glob';
 import { writeFileSync, existsSync } from 'fs';
 import * as ts from 'typescript';
+import * as os from 'os';
+
+function formatWindowsPath(p: string) {
+  if (os.platform() === 'win32' && p) {
+    return p.split(sep).join(posix.sep);
+  }
+  return p;
+}
 
 interface EntryGeneratorOptions {
   baseUrl?: string;
@@ -33,6 +49,7 @@ export class EntryGenerator {
   private program!: ts.Program;
   private sourceDir!: string;
   private programFiles!: string[];
+  private isESM = false;
 
   DEFAULT_PATTERN = ['**/**.ts', '**/**.tsx', '**/**.js'];
   DEFAULT_IGNORE_PATTERN = [
@@ -66,6 +83,11 @@ export class EntryGenerator {
       throw new Error(
         'Not found tsconfig.json bundle-helper only supports typescript'
       );
+    }
+
+    const pkg = safeRequire(resolve(baseUrl, 'package.json'));
+    if (pkg?.type === 'module') {
+      this.isESM = true;
     }
 
     this.sourceDir = resolve(baseUrl, srcDir);
@@ -137,18 +159,22 @@ export class EntryGenerator {
     const exportCodes = collection.exportFiles
       .filter(path => relative(collection.configurationFilepath, path) !== '')
       .map(path => {
-        return `export * from './${relative(this.sourceDir, path)
-          .replace(extname(path), '')
+        return `export * from './${formatWindowsPath(
+          relative(this.sourceDir, path)
+        )
+          .replace(extname(path), this.isESM ? '.js' : '')
           .replace(/\\/g, '/')}';\n`;
       });
 
     exportCodes.unshift(
       `export { ${
         collection.configurationClz
-      } as Configuration } from './${relative(
-        this.sourceDir,
-        collection.configurationFilepath
-      ).replace(extname(collection.configurationFilepath), '')}';\n`
+      } as Configuration } from './${formatWindowsPath(
+        relative(this.sourceDir, collection.configurationFilepath)
+      ).replace(
+        extname(collection.configurationFilepath),
+        this.isESM ? '.js' : ''
+      )}';\n`
     );
 
     exportCodes.unshift(this.BANNER);

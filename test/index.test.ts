@@ -45,4 +45,26 @@ describe('/test/index.test.ts', () => {
       validate(resolve(__dirname, `./fixtures/case4`));
     });
   });
+
+  it('fix issue11', async () => {
+    const baseUrl = resolve(__dirname, './fixtures/issue11');
+    const generator = new EntryGenerator({
+      baseUrl,
+    });
+    generator.run();
+    expect(
+      readFileSync(resolve(baseUrl, 'src/index.ts')).toString()
+    ).toMatchSnapshot();
+  });
+
+  it('support esm project', async () => {
+    const baseUrl = resolve(__dirname, './fixtures/base-app-esm');
+    const generator = new EntryGenerator({
+      baseUrl,
+    });
+    generator.run();
+    expect(
+      readFileSync(resolve(baseUrl, 'src/index.ts')).toString()
+    ).toMatchSnapshot();
+  });
 });
