@@ -1,8 +1,16 @@
-import { resolve, relative, extname, normalize, isAbsolute, posix } from 'path';
+import { resolve, relative, extname, normalize, isAbsolute, posix, sep } from 'path';
 import { safeRequire, safelyGet } from '@midwayjs/core';
 import { run } from '@midwayjs/glob';
 import { writeFileSync, existsSync } from 'fs';
 import * as ts from 'typescript';
+import * as os from 'os';
+
+function formatWindowsPath(p: string) {
+  if (os.platform() === 'win32' && p) {
+    return p.split(sep).join(posix.sep);
+  }
+  return p;
+}
 
 interface EntryGeneratorOptions {
   baseUrl?: string;
@@ -135,9 +143,9 @@ export class EntryGenerator {
   public run() {
     const collection = this.collect();
     const exportCodes = collection.exportFiles
-      .filter(path => posix.relative(collection.configurationFilepath, path) !== '')
+      .filter(path => relative(collection.configurationFilepath, path) !== '')
       .map(path => {
-        return `export * from './${posix.relative(this.sourceDir, path)
+        return `export * from './${formatWindowsPath(relative(this.sourceDir, path))
           .replace(extname(path), '')
           .replace(/\\/g, '/')}';\n`;
       });
@@ -145,10 +153,10 @@ export class EntryGenerator {
     exportCodes.unshift(
       `export { ${
         collection.configurationClz
-      } as Configuration } from './${posix.relative(
+      } as Configuration } from './${formatWindowsPath(relative(
         this.sourceDir,
         collection.configurationFilepath
-      ).replace(extname(collection.configurationFilepath), '')}';\n`
+      )).replace(extname(collection.configurationFilepath), '')}';\n`
     );
 
     exportCodes.unshift(this.BANNER);
